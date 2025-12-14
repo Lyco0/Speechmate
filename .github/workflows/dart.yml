@@ -1,17 +1,18 @@
-name: Build APK
+env:
+  APP_VERSION: 1.0.0  # Change the version name here before pushing to build
+  APP_NAME: Speechmate
+
+name: Dart
 
 on:
   push:
-    branches:
-      - main
-
-env:
-  APP_VERSION: 1.0.1     # Change version here
-  APP_NAME: Speechmate  # App name for release
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
-    name: Build Release APK
+    name: Build APK
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
 
@@ -19,38 +20,49 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.3'
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
 
       - name: Update app version in pubspec.yaml
         run: |
           sed -i "s/^version:.*/version: $APP_VERSION/" pubspec.yaml
 
-      - name: Build release APK
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Restore .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Build APK
         run: flutter build apk --release
 
-      # ✅ Create GitHub Release
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+      - name: Rename artifacts
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/${{ env.APP_NAME }}-${{ env.APP_VERSION }}.apk
+  
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v${{ env.APP_VERSION }}
-          name: ${{ env.APP_NAME }} v${{ env.APP_VERSION }}
-          body: |
-            🚀 Release of **${{ env.APP_NAME }}**
-            
-            Version: **${{ env.APP_VERSION }}**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}
+          path: build/app/outputs/flutter-apk/${{ env.APP_NAME }}-${{ env.APP_VERSION }}.apk
 
-      # ✅ Upload APK to the release
-      - name: Upload APK to Release
-        uses: softprops/action-gh-release@v1
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          name: "${{ env.APP_NAME }}-${{ env.APP_VERSION }}"
+          tag_name: "v${{ env.APP_VERSION }}"
+          files: |
+            build/app/outputs/flutter-apk/${{ env.APP_NAME }}-${{ env.APP_VERSION }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
