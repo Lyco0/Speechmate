@@ -1,77 +1,100 @@
-# Speechmate
+<p align="center">
+  <img src="./assets/screenshots/banner.png" width="100%">
+</p>
 
-**Speechmate** is a simple prototype of a bilingual classroom assistant for tribal schools in the Nicobar region.
+<h1 align="center" style="font-family: Arial, sans-serif; color: #FF6F61; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+  SPEECHMATE
+</h1>
+<p align="center">
+  <a>
+    <img src="https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white"
+      alt="DART" />
+  </a>
 
-It demonstrates how teachers and children can use a single app to bridge the gap between the **school language (English)** and the **tribal language (Central Nicobarese)**.
+  <a>
+    <img src="https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white"
+      alt="Flutter" />
+  </a>
 
-This repository contains:
+  <a>
+    <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat&logo=androidstudio&logoColor=white"
+      alt="Android studio" />
+  </a>
 
-- Complete source code (open-source)
-- Sample bilingual phrase data
-- Architecture documentation
-- Example test cases
-- License information
+  <a>
+  <img src="https://img.shields.io/badge/Text--To--Speech-4285F4?style=flat&logo=google&logoColor=white"
+       alt="Text To Speech" />
+  </a>
 
----
+  <a>
+  <img src="https://img.shields.io/badge/JSON-000000?style=flat&logo=json&logoColor=white"
+       alt="JSON" />
+  </a>
 
-## 1. Problem & Idea
 
-In many tribal classrooms, young children speak only their **home / tribal language**, while teaching happens in **English or Hindi**.  
-This leads to:
+</p>
 
-- Communication gaps between teacher and child  
-- Loss of confidence and learning  
-- Slow disappearance of the tribal language
+SpeechMate is a Flutter-based mobile application designed to help users translate English words into Nicobarese in a simple, intuitive, and visually engaging way.
+The app is built with both students and teachers in mind, providing role-based dashboards and features to support learning, teaching, and language preservation.
 
-**Speechmate** is a prototype that shows how a small app can:
+The goal of SpeechMate is to make bilingual word lookup fast, accessible, and easy to understand, even for users with minimal technical knowledge.
 
-- Help children **hear and see** words in **both** languages  
-- Help teachers **give instructions** in school language and get the **tribal-language output** (text + audio in future versions)
 
----
+# Features🔧
 
-## 2. Features (Demo version)
+- 🔍 English to Nicobarese Translation
+- 🎓 Role-based Access
+    - Student Dashboard
+    - Teacher Dashboard
+- 🧠 Common Words Cards for quick lookup
+- 🖱️ Tap Animations for better user interaction
+- 🎨 Modern UI with Gradient Design
+- 🔊 Text-to-Speech (TTS) support (Teacher Dashboard)
+- ⌨️ Auto-hide Keyboard after search
+- ⚠️ Graceful Error Handling (e.g., “Word not found”)
 
-### Child Mode
+# Screenshots
 
-- Big, colourful picture cards with emojis
-- When a child taps a card:
-  - Shows **English word/phrase**
-  - Shows **Central Nicobarese equivalent**
-  - (In a future version: plays recorded tribal audio)
+<p align="center">
+  <img src="./assets/screenshots/img1.png" width="22%" style="margin: 1%" />
+  <img src="./assets/screenshots/img2.png" width="22%" style="margin: 1%" />
+  <img src="./assets/screenshots/img4.png" width="22%" style="margin: 1%" />
+  <img src="./assets/screenshots/img3.png" width="22%" style="margin: 1%" />
+</p>
 
-### Teacher Mode
+# ⚙️ How It Works / Technologies Used
+> This section explains the internal working of the app.
 
-- Teacher types a command in **English** (e.g., `come here`, `water`)
-- App looks it up in a small **offline phrase library**
-- Shows the **Nicobarese phrase**
-- Simulated “mic” button that cycles through demo phrases to represent a future speech-to-text feature
+### 🛠️ Technologies
 
-> Note: This is a **web-based prototype** (HTML + CSS + JavaScript), not a full Android APK. It is meant for **demonstration and video**.
+- Flutter – UI and application logic
+- Dart – Programming language
+- JSON – Local dictionary storage
+- Text-to-Speech (TTS) – Pronunciation support for teachers
+- Material Design – Clean and consistent UI components
 
----
+### 🔄 Workflow
 
-## 3. Tech Stack
+**1.** User selects a role (Student / Teacher)  
+**2.** Enters or taps a word to search  
+**3.** App searches the local JSON dictionary  
+**4.** Matching translation is displayed in a translation card  
+**5.** Teacher can use TTS to hear pronunciation  
+**6.** Common word cards allow instant lookup without typing  
+**7.** The app is fully offline, making it usable in low-connectivity environments.
 
-- **Frontend**:  
-  - HTML5  
-  - CSS3  
-  - Vanilla JavaScript (ES6)
 
-- **No backend / no server** (static site)
-- **No build tools** required
+# 🎯 Problem It Solves
 
----
+**1.** Helps bridge the language gap between English and Nicobarese  
+**2.** Supports students in learning new words quickly  
+**3.** Assists teachers in explaining pronunciation using TTS  
+**4.** Preserves and promotes a regional language in digital form  
+**5.** Eliminates dependency on the internet for translations  
+**6.** Provides a simple learning tool for areas with limited resources
 
-## 4. Project Structure
+## 🚀 Future Enhancements
 
-```text
-speechmate/
-├─ index.html          # Single-page app: UI + logic
-├─ data/
-│  └─ phrases.json     # Sample English → Nicobarese phrase data
-├─ tests/
-│  └─ test_cases.md    # Manual test cases for demo validation
-├─ README.md           # Project overview and setup
-├─ ARCHITECTURE.md     # Architecture and design decisions
-└─ LICENSE             # Open-source license (MIT)
+- Sentence translation
+- Voice input for search
+- More Nicobarese dialect support
