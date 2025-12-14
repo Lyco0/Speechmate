@@ -11,7 +11,8 @@ env:
 
 jobs:
   build:
-    name: Build Flutter APK
+    name: Build APK
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +22,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable
+          flutter-version: '3.29.3'
 
       - name: Install dependencies
         run: flutter pub get
