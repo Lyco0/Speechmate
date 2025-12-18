@@ -6,7 +6,7 @@ class TranslationCard extends StatelessWidget {
   final bool isError;
   final VoidCallback? onPlayAudio;
 
-  const TranslationCard({
+  TranslationCard({
     super.key,
     required this.english,
     required this.nicobarese,
