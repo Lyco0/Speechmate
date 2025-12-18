@@ -16,6 +16,7 @@ class StudentDash extends StatefulWidget {
 class _StudentDashState extends State<StudentDash> {
   final TextEditingController searchController = TextEditingController();
   final DictionaryService dictionaryService = DictionaryService();
+  final AudioService audioService = AudioService();
   final List<Map<String, dynamic>> commonWords = [
     {
       "word": "Tree",
@@ -122,12 +123,20 @@ class _StudentDashState extends State<StudentDash> {
                   emoji: w["emoji"],
                   gradient: List<Color>.from(w["colors"]),
                   onWordSelected: (selectedWord) {
-                    FocusScope.of(context).unfocus(); // hide keyboard
-                    setState(() {
-                      searchController.text = selectedWord;
-                      result = dictionaryService.search(selectedWord);
-                    });
-                  },
+  FocusScope.of(context).unfocus();
+
+  setState(() {
+    searchController.text = selectedWord;
+    result = dictionaryService.search(selectedWord);
+  });
+
+  if (result != null && result!['audio'] != null) {
+    audioService.play(
+      category: result!['audio']['category'],
+      file: result!['audio']['file'],
+    );
+  }
+},
                 );
               }).toList(),
             ),
