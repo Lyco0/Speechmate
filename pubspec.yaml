@@ -1,5 +1,5 @@
 name: speechmate
-description: "A bilingual Dictionary for Nicobarese translation"
+description: "A bilangual Dictionary for Nicobarian translation"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,16 +10,23 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  audioplayers: ^6.0.0
+  flutter_tts: ^4.2.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/audio/
     - assets/data/dictionary.json
-    - assets/icons/logo.png
+    - assets/icons/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21
