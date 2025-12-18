@@ -19,19 +19,19 @@ class _TeacherDashState extends State<TeacherDash> {
 
   Map<String, dynamic>? result;
 
-  // 🔹 Common classroom phrases with REAL audio
+  // ✅ Common classroom phrases with REAL audio
   final List<Map<String, String>> commonPhrases = [
     {
       "text": "Good Morning",
-      "audio": "assets/audio/phrases/good_morning.mp3",
+      "audio": "assets/audio/good_morning.mp3",
     },
     {
       "text": "How are you?",
-      "audio": "assets/audio/phrases/how_are_you.mp3",
+      "audio": "assets/audio/how_are_you.mp3",
     },
     {
       "text": "Keep Silent",
-      "audio": "assets/audio/phrases/keep_silent.mp3",
+      "audio": "assets/audio/keep_silent.mp3",
     },
   ];
 
@@ -65,21 +65,18 @@ class _TeacherDashState extends State<TeacherDash> {
         ],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Title
             const Text(
               "English → Nicobarese",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // 🔹 Search
             Search(
               controller: searchController,
               onSearch: performSearch,
@@ -88,28 +85,69 @@ class _TeacherDashState extends State<TeacherDash> {
 
             const SizedBox(height: 20),
 
-            // 🔹 Search result card
+            // 🔹 Dictionary search result (NO audio here)
             if (searchController.text.isNotEmpty)
               TranslationCard(
+                english: result != null ? result!['english'] : "",
                 nicobarese:
                     result != null ? result!['nicobarese'] : "Word not found",
-                english: result != null ? result!['english'] : "",
                 isError: result == null,
-                onPlayAudio: result != null && result!['audio'] != null
-                    ? () => audioService.play(
-                          category: result!['audio']['category'],
-                          file: result!['audio']['file'],
-                        )
-                    : null,
               ),
 
             const SizedBox(height: 30),
 
-            // 🔹 Common phrases
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Common Classroom Phrases",
+            const Text(
+              "Common Classroom Phrases",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // 🔹 Phrase buttons
+            Column(
+              children: commonPhrases.map((p) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      elevation: 3,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      audioService.playAsset(p["audio"]!);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${p["text"]} (tribal lang)",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const Icon(Icons.play_circle_fill),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}                "Common Classroom Phrases",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
