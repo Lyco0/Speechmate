@@ -39,12 +39,6 @@ class _StudentDashState extends State<StudentDash> {
       "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
       "audio": "assets/audio/sea.mp3",
     },
-    {
-      "word": "Sun",
-      "emoji": "☀️",
-      "colors": [Color(0xFF5ED87D), Color(0xFF92FF70)],
-      "audio": "assets/audio/sun.mp3",
-    },
   ];
 
   @override
@@ -71,20 +65,14 @@ class _StudentDashState extends State<StudentDash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
-        colors: const [
-          Color(0xFF94FFF8),
-          Color(0xFF38BDF8),
-        ],
+        colors: const [Color(0xFF94FFF8), Color(0xFF38BDF8)],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "English → Nicobarese",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 20),
@@ -99,10 +87,7 @@ class _StudentDashState extends State<StudentDash> {
 
             const Text(
               "Some common words",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
 
             const SizedBox(height: 15),
@@ -110,6 +95,38 @@ class _StudentDashState extends State<StudentDash> {
             Wrap(
               spacing: 16,
               runSpacing: 16,
+              children: commonWords.map((w) {
+                return CommonWordCard(
+                  word: w["word"],
+                  emoji: w["emoji"],
+                  gradient: List<Color>.from(w["colors"]),
+                  onWordSelected: (selectedWord) {
+                    setState(() {
+                      searchController.text = selectedWord;
+                      result = dictionaryService.search(selectedWord);
+                    });
+
+                    audioService.playAsset(w["audio"]);
+                  },
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 30),
+
+            if (searchController.text.isNotEmpty)
+              TranslationCard(
+                english: result != null ? result!['english'] : "",
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
+                isError: result == null,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}              runSpacing: 16,
               children: commonWords.map((w) {
                 return CommonWordCard(
                   word: w["word"],
