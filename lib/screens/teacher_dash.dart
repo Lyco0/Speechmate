@@ -19,7 +19,6 @@ class _TeacherDashState extends State<TeacherDash> {
 
   Map<String, dynamic>? result;
 
-  // ✅ Common classroom phrases with REAL audio
   final List<Map<String, String>> commonPhrases = [
     {
       "text": "Good Morning",
@@ -42,7 +41,6 @@ class _TeacherDashState extends State<TeacherDash> {
   }
 
   void performSearch() {
-    FocusScope.of(context).unfocus();
     setState(() {
       result = dictionaryService.search(searchController.text);
     });
@@ -59,20 +57,14 @@ class _TeacherDashState extends State<TeacherDash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
-        colors: const [
-          Color(0xFF38BDF8),
-          Color(0xFF94FFF8),
-        ],
+        colors: const [Color(0xFF38BDF8), Color(0xFF94FFF8)],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "English → Nicobarese",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 20),
@@ -85,7 +77,6 @@ class _TeacherDashState extends State<TeacherDash> {
 
             const SizedBox(height: 20),
 
-            // 🔹 Dictionary search result (NO audio here)
             if (searchController.text.isNotEmpty)
               TranslationCard(
                 english: result != null ? result!['english'] : "",
@@ -98,18 +89,36 @@ class _TeacherDashState extends State<TeacherDash> {
 
             const Text(
               "Common Classroom Phrases",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 10),
 
-            // 🔹 Phrase buttons
             Column(
               children: commonPhrases.map((p) {
                 return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      audioService.playAsset(p["audio"]!);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("${p["text"]} (tribal lang)"),
+                        const Icon(Icons.play_arrow),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}                return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   width: double.infinity,
                   child: ElevatedButton(
