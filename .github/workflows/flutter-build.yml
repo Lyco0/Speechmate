@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Flutter
@@ -18,12 +18,15 @@ jobs:
         with:
           flutter-version: '3.16.9'
           channel: stable
-          cache: true
+          cache: false   # IMPORTANT: disable cache to avoid old dependency issues
 
-      - name: Verify Flutter installation
+      - name: Verify Flutter
         run: flutter --version
 
-      - name: Install dependencies
+      - name: Clean project
+        run: flutter clean
+
+      - name: Get dependencies
         run: flutter pub get
 
       - name: Build release APK
