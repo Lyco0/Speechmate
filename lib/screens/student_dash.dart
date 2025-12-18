@@ -21,11 +21,30 @@ class _StudentDashState extends State<StudentDash> {
   Map<String, dynamic>? result;
 
   final List<Map<String, dynamic>> commonWords = [
-    {"word": "Tree", "emoji": "🌳"},
-    {"word": "Water", "emoji": "💧"},
-    {"word": "Sea", "emoji": "🌊"},
-    {"word": "Sun", "emoji": "☀️"},
-    {"word": "Cold", "emoji": "❄️"},
+    {
+      "word": "Tree",
+      "emoji": "🌳",
+      "colors": [Color(0xFFFF7E79), Color(0xFFFFB677)],
+      "audio": "assets/audio/tree.mp3",
+    },
+    {
+      "word": "Water",
+      "emoji": "💧",
+      "colors": [Color(0xFFFFA834), Color(0xFFFFD56F)],
+      "audio": "assets/audio/water.mp3",
+    },
+    {
+      "word": "Sea",
+      "emoji": "🌊",
+      "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
+      "audio": "assets/audio/sea.mp3",
+    },
+    {
+      "word": "Sun",
+      "emoji": "☀️",
+      "colors": [Color(0xFF5ED87D), Color(0xFF92FF70)],
+      "audio": "assets/audio/sun.mp3",
+    },
   ];
 
   @override
@@ -52,14 +71,20 @@ class _StudentDashState extends State<StudentDash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
-        colors: const [Color(0xFF94FFF8), Color(0xFF38BDF8)],
+        colors: const [
+          Color(0xFF94FFF8),
+          Color(0xFF38BDF8),
+        ],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "English → Nicobarese",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
             ),
 
             const SizedBox(height: 20),
@@ -70,46 +95,57 @@ class _StudentDashState extends State<StudentDash> {
               onClear: clearSearch,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
+
+            const Text(
+              "Some common words",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 15),
 
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: 16,
+              runSpacing: 16,
               children: commonWords.map((w) {
                 return CommonWordCard(
                   word: w["word"],
                   emoji: w["emoji"],
-                  onWordSelected: (word) {
+                  gradient: List<Color>.from(w["colors"]),
+                  onWordSelected: (selectedWord) {
+                    FocusScope.of(context).unfocus();
+
                     setState(() {
-                      searchController.text = word;
-                      result = dictionaryService.search(word);
+                      searchController.text = selectedWord;
+                      result = dictionaryService.search(selectedWord);
                     });
 
-                    if (result != null && result!['audio'] != null) {
-                      audioService.playAsset(result!['audio']);
+                    if (w["audio"] != null) {
+                      audioService.playAsset(w["audio"]);
                     }
                   },
                 );
               }).toList(),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-            if (result != null)
+            if (searchController.text.isNotEmpty)
               TranslationCard(
-                english: result!['english'],
-                nicobarese: result!['nicobarese'],
-                onPlayAudio: result!['audio'] != null
-                    ? () => audioService.playAsset(result!['audio'])
-                    : null,
+                english: result != null ? result!['english'] : "",
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
+                isError: result == null,
               ),
           ],
         ),
       ),
     );
   }
-}              alignment: Alignment.centerLeft,
-              child: Text(
+}              child: Text(
                 "Some common words",
                 style: TextStyle(
                   fontSize: 16,
