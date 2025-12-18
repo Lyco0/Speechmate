@@ -4,6 +4,7 @@ import '../widgets/common_word_card.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/translation_card.dart';
 import '../services/dictionary_service.dart';
+import '../services/audio_service.dart';
 
 class StudentDash extends StatefulWidget {
   const StudentDash({super.key});
