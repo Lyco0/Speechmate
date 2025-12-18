@@ -17,6 +17,7 @@ class _StudentDashState extends State<StudentDash> {
   final TextEditingController searchController = TextEditingController();
   final DictionaryService dictionaryService = DictionaryService();
   final AudioService audioService = AudioService();
+
   final List<Map<String, dynamic>> commonWords = [
     {
       "word": "Tree",
@@ -50,7 +51,6 @@ class _StudentDashState extends State<StudentDash> {
     },
   ];
 
-
   Map<String, dynamic>? result;
 
   @override
@@ -61,9 +61,16 @@ class _StudentDashState extends State<StudentDash> {
 
   void performSearch() {
     FocusScope.of(context).unfocus();
+    final searchResult =
+        dictionaryService.search(searchController.text);
+
     setState(() {
-      result = dictionaryService.search(searchController.text);
+      result = searchResult;
     });
+
+    if (searchResult != null && searchResult['audio'] != null) {
+      audioService.play(searchResult['audio']);
+    }
   }
 
   void clearSearch() {
@@ -77,7 +84,7 @@ class _StudentDashState extends State<StudentDash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
-        colors: [Color(0xFF94FFF8),Color(0xFF38BDF8)],
+        colors: const [Color(0xFF94FFF8), Color(0xFF38BDF8)],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,6 +119,7 @@ class _StudentDashState extends State<StudentDash> {
                 ),
               ),
             ),
+
             const SizedBox(height: 15),
 
             Wrap(
@@ -123,34 +131,44 @@ class _StudentDashState extends State<StudentDash> {
                   emoji: w["emoji"],
                   gradient: List<Color>.from(w["colors"]),
                   onWordSelected: (selectedWord) {
-  FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus();
 
-  setState(() {
-    searchController.text = selectedWord;
-    result = dictionaryService.search(selectedWord);
-  });
+                    final searchResult =
+                        dictionaryService.search(selectedWord);
 
-  if (result != null && result!['audio'] != null) {
-    audioService.play(
-      category: result!['audio']['category'],
-      file: result!['audio']['file'],
-    );
-  }
-},
+                    setState(() {
+                      searchController.text = selectedWord;
+                      result = searchResult;
+                    });
+
+                    if (searchResult != null &&
+                        searchResult['audio'] != null) {
+                      audioService.play(searchResult['audio']);
+                    }
+                  },
                 );
               }).toList(),
             ),
-
 
             const SizedBox(height: 30),
 
             if (searchController.text.isNotEmpty)
               TranslationCard(
-                nicobarese: result != null ? result!['nicobarese'] : "Word not found",
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
                 english: result != null ? result!['english'] : "",
                 isError: result == null,
+                onPlayAudio:
+                    result != null && result!['audio'] != null
+                        ? () => audioService.play(result!['audio'])
+                        : null,
               ),
           ],
+        ),
+      ),
+    );
+  }
+}    ],
         ),
       ),
     );
