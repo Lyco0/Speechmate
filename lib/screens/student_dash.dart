@@ -18,40 +18,15 @@ class _StudentDashState extends State<StudentDash> {
   final DictionaryService dictionaryService = DictionaryService();
   final AudioService audioService = AudioService();
 
-  final List<Map<String, dynamic>> commonWords = [
-    {
-      "word": "Tree",
-      "emoji": "🌳",
-      "colors": [Color(0xFFFF7E79), Color(0xFFFFB677)],
-    },
-    {
-      "word": "Water",
-      "emoji": "💧",
-      "colors": [Color(0xFFFFA834), Color(0xFFFFD56F)],
-    },
-    {
-      "word": "Sea",
-      "emoji": "🌊",
-      "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
-    },
-    {
-      "word": "Island",
-      "emoji": "🏝️",
-      "colors": [Color(0xFFB084FF), Color(0xFF7AA6FF)],
-    },
-    {
-      "word": "Cold",
-      "emoji": "❄️",
-      "colors": [Color(0xFFFFA9A3), Color(0xFFFFD6A5)],
-    },
-    {
-      "word": "Sun",
-      "emoji": "☀️",
-      "colors": [Color(0xFF5ED87D), Color(0xFF92FF70)],
-    },
-  ];
-
   Map<String, dynamic>? result;
+
+  final List<Map<String, dynamic>> commonWords = [
+    {"word": "Tree", "emoji": "🌳"},
+    {"word": "Water", "emoji": "💧"},
+    {"word": "Sea", "emoji": "🌊"},
+    {"word": "Sun", "emoji": "☀️"},
+    {"word": "Cold", "emoji": "❄️"},
+  ];
 
   @override
   void initState() {
@@ -61,16 +36,9 @@ class _StudentDashState extends State<StudentDash> {
 
   void performSearch() {
     FocusScope.of(context).unfocus();
-    final searchResult =
-        dictionaryService.search(searchController.text);
-
     setState(() {
-      result = searchResult;
+      result = dictionaryService.search(searchController.text);
     });
-
-    if (searchResult != null && searchResult['audio'] != null) {
-      audioService.play(searchResult['audio']);
-    }
   }
 
   void clearSearch() {
@@ -87,18 +55,14 @@ class _StudentDashState extends State<StudentDash> {
         colors: const [Color(0xFF94FFF8), Color(0xFF38BDF8)],
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "English → Nicobarese",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
             Search(
               controller: searchController,
@@ -106,10 +70,45 @@ class _StudentDashState extends State<StudentDash> {
               onClear: clearSearch,
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
-            const Align(
-              alignment: Alignment.centerLeft,
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: commonWords.map((w) {
+                return CommonWordCard(
+                  word: w["word"],
+                  emoji: w["emoji"],
+                  onWordSelected: (word) {
+                    setState(() {
+                      searchController.text = word;
+                      result = dictionaryService.search(word);
+                    });
+
+                    if (result != null && result!['audio'] != null) {
+                      audioService.playAsset(result!['audio']);
+                    }
+                  },
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 20),
+
+            if (result != null)
+              TranslationCard(
+                english: result!['english'],
+                nicobarese: result!['nicobarese'],
+                onPlayAudio: result!['audio'] != null
+                    ? () => audioService.playAsset(result!['audio'])
+                    : null,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}              alignment: Alignment.centerLeft,
               child: Text(
                 "Some common words",
                 style: TextStyle(
