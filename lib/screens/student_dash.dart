@@ -36,6 +36,11 @@ class _StudentDashState extends State<StudentDash> {
       "emoji": "🌊",
       "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
     },
+    {
+      "word": "Cold",
+      "emoji": "❄️",
+      "colors": [Color(0xFFFFA9A3), Color(0xFFFFD6A5)],
+    },
   ];
 
   @override
@@ -69,10 +74,13 @@ class _StudentDashState extends State<StudentDash> {
           children: [
             const Text(
               "English → Nicobarese",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
             Search(
               controller: searchController,
@@ -80,7 +88,20 @@ class _StudentDashState extends State<StudentDash> {
               onClear: clearSearch,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Some common words",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
 
             Wrap(
               spacing: 16,
@@ -91,16 +112,15 @@ class _StudentDashState extends State<StudentDash> {
                   emoji: w["emoji"],
                   gradient: List<Color>.from(w["colors"]),
                   onWordSelected: (selectedWord) {
+                    FocusScope.of(context).unfocus();
+
                     setState(() {
                       searchController.text = selectedWord;
                       result = dictionaryService.search(selectedWord);
                     });
 
                     if (result != null && result!['audio'] != null) {
-                      audioService.play(
-                        category: result!['audio']['category'],
-                        file: result!['audio']['file'],
-                      );
+                      audioService.play(result!['audio']);
                     }
                   },
                 );
@@ -110,6 +130,21 @@ class _StudentDashState extends State<StudentDash> {
             const SizedBox(height: 30),
 
             if (searchController.text.isNotEmpty)
+              TranslationCard(
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
+                english: result != null ? result!['english'] : "",
+                isError: result == null,
+                onPlayAudio: result != null && result!['audio'] != null
+                    ? () => audioService.play(result!['audio'])
+                    : null,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}            if (searchController.text.isNotEmpty)
               TranslationCard(
                 nicobarese:
                     result != null ? result!['nicobarese'] : "Word not found",
