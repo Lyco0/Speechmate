@@ -51,29 +51,23 @@ class _TeacherDashState extends State<TeacherDash> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 🔹 Title
               const Center(
                 child: Text(
                   "English → Nicobarese",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 25),
 
-              /// 🔹 Search bar
               Search(
                 controller: searchController,
                 onSearch: performSearch,
                 onClear: clearSearch,
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 25),
 
-              /// 🔹 Translation result
               if (searchController.text.isNotEmpty)
                 TranslationCard(
                   nicobarese:
@@ -93,18 +87,60 @@ class _TeacherDashState extends State<TeacherDash> {
 
               const SizedBox(height: 30),
 
-              /// 🔹 Common Phrases Title
               const Text(
                 "Common Classroom Phrases",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
               phraseButton(
+                text: "Good Morning",
+                audioPath: "assets/audio/phrases/good_morning.mp3",
+              ),
+              phraseButton(
+                text: "How are you?",
+                audioPath: "assets/audio/phrases/how_are_you.mp3",
+              ),
+              phraseButton(
+                text: "Keep Silent",
+                audioPath: "assets/audio/phrases/keep_silent.mp3",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget phraseButton({
+    required String text,
+    required String audioPath,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => audioService.playAsset(audioPath),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(text, style: const TextStyle(fontSize: 16)),
+            const Icon(Icons.volume_up),
+          ],
+        ),
+      ),
+    );
+  }
+}              phraseButton(
                 text: "Good Morning",
                 audioPath: "assets/audio/phrases/good_morning.mp3",
               ),
