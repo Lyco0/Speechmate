@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../widgets/background.dart';
+import '../widgets/search_bar.dart';
+import '../widgets/translation_card.dart';
 import '../services/dictionary_service.dart';
 import '../services/audio_service.dart';
 import '../services/tts_service.dart';
@@ -11,10 +14,10 @@ class TeacherDash extends StatefulWidget {
 }
 
 class _TeacherDashState extends State<TeacherDash> {
-  final searchController = TextEditingController();
-  final dictionaryService = DictionaryService();
-  final audioService = AudioService();
-  final ttsService = TtsService();
+  final TextEditingController searchController = TextEditingController();
+  final DictionaryService dictionaryService = DictionaryService();
+  final AudioService audioService = AudioService();
+  final TtsService ttsService = TtsService();
 
   Map<String, dynamic>? result;
 
@@ -24,55 +27,77 @@ class _TeacherDashState extends State<TeacherDash> {
     dictionaryService.load();
   }
 
-  void search() {
+  void performSearch() {
+    FocusScope.of(context).unfocus();
     setState(() {
       result = dictionaryService.search(searchController.text);
+    });
+  }
+
+  void clearSearch() {
+    setState(() {
+      searchController.clear();
+      result = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Teacher Mode")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: Background(
+        colors: const [
+          Color(0xFF38BDF8),
+          Color(0xFF94FFF8),
+        ],
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                labelText: "Enter English word",
+            /// 🔹 Title
+            const Text(
+              "English → Nicobarese",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
-              onSubmitted: (_) => search(),
             ),
-            const SizedBox(height: 20),
 
-            if (result != null) ...[
-              Text(
-                result!['nicobarese'],
-                style: const TextStyle(fontSize: 28),
+            const SizedBox(height: 30),
+
+            /// 🔹 Search bar
+            Search(
+              controller: searchController,
+              onSearch: performSearch,
+              onClear: clearSearch,
+            ),
+
+            const SizedBox(height: 30),
+
+            /// 🔹 Translation result
+            if (searchController.text.isNotEmpty)
+              TranslationCard(
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
+                english: result != null ? result!['english'] : "",
+                isError: result == null,
+
+                /// 🔊 AUDIO LOGIC
+                onPlayAudio: result != null
+                    ? () {
+                        // 1️⃣ If recorded audio exists → play it
+                        if (result!['audio'] != null) {
+                          audioService.playFromJson(result!['audio']);
+                        }
+                        // 2️⃣ Else → fallback to TTS
+                        else {
+                          ttsService.speakNicobarese(
+                            result!['nicobarese'],
+                          );
+                        }
+                      }
+                    : null,
               ),
-              const SizedBox(height: 10),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (result!['audio'] != null)
-                    IconButton(
-                      icon: const Icon(Icons.record_voice_over),
-                      onPressed: () {
-                        audioService.playFromJson(result!['audio']);
-                      },
-                    ),
-                  IconButton(
-                    icon: const Icon(Icons.volume_up),
-                    onPressed: () {
-                      ttsService.speak(result!['nicobarese']);
-                    },
-                  ),
-                ],
-              )
-            ],
           ],
         ),
       ),
