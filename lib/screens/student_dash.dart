@@ -23,32 +23,12 @@ class _StudentDashState extends State<StudentDash> {
 
   /// 🔹 Learn Categories
   final List<Map<String, dynamic>> learnCategories = [
-    {
-      "title": "Nature",
-      "emoji": "🌿",
-      "route": "nature",
-    },
-    {
-      "title": "My Body",
-      "emoji": "🧍",
-    },
-    {
-      "title": "Feelings",
-      "emoji": "😊",
-    },
-    {
-      "title": "Numbers",
-      "emoji": "🔢",
-      "route": "numbers",
-    },
-    {
-      "title": "Family",
-      "emoji": "👨‍👩‍👧",
-    },
-    {
-      "title": "Animals",
-      "emoji": "🐾",
-    },
+    {"title": "Nature", "emoji": "🌿", "route": "nature"},
+    {"title": "My Body", "emoji": "🧍"},
+    {"title": "Feelings", "emoji": "😊"},
+    {"title": "Numbers", "emoji": "🔢", "route": "numbers"},
+    {"title": "Family", "emoji": "👨‍👩‍👧"},
+    {"title": "Animals", "emoji": "🐾"},
   ];
 
   @override
@@ -81,20 +61,15 @@ class _StudentDashState extends State<StudentDash> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 🔹 Title
               const Center(
                 child: Text(
                   "English → Nicobarese",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                 ),
               ),
 
               const SizedBox(height: 25),
 
-              /// 🔹 Search Bar
               Search(
                 controller: searchController,
                 onSearch: performSearch,
@@ -103,8 +78,99 @@ class _StudentDashState extends State<StudentDash> {
 
               const SizedBox(height: 20),
 
-              /// 🔹 Translation Result
               if (searchController.text.isNotEmpty)
+                TranslationCard(
+                  nicobarese:
+                      result != null ? result!['nicobarese'] : "Word not found",
+                  english: result != null ? result!['english'] : "",
+                  isError: result == null,
+                  onPlayAudio: result != null && result!['audio'] != null
+                      ? () => audioService.playAsset(result!['audio'])
+                      : null,
+                ),
+
+              const SizedBox(height: 35),
+
+              const Text(
+                "Learn",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(height: 15),
+
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: learnCategories.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.2,
+                ),
+                itemBuilder: (context, index) {
+                  final item = learnCategories[index];
+
+                  return InkWell(
+                    onTap: () {
+                      if (item['route'] == 'nature') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NatureScreen(),
+                          ),
+                        );
+                      } else if (item['route'] == 'numbers') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NumbersScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("${item['title']} coming soon"),
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(item['emoji'],
+                              style: const TextStyle(fontSize: 36)),
+                          const SizedBox(height: 10),
+                          Text(
+                            item['title'],
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}              if (searchController.text.isNotEmpty)
                 TranslationCard(
                   nicobarese:
                       result != null ? result!['nicobarese'] : "Word not found",
