@@ -11,6 +11,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_tts: ^4.2.3
   audioplayers: ^6.5.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -22,7 +23,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true
-  image_path: "assets/icons/logo.png"
+  image_path: "assets/icons/logo_main.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
 
 flutter_native_splash:
@@ -41,10 +42,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/dictionary.json
-    - assets/icons/logo.png
+    - assets/icons/logo_main.png
     - assets/audio/numbers/
     - assets/audio/phrases/
     - assets/audio/nature/
     - assets/data/dictionary_phrases.json
-    - assets/data/dictionary_numbers.json
-    - assets/data/dictionary_nature.json
+    - assets/icons/branding.png

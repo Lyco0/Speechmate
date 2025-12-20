@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'tap_scale.dart';
 
-class CommonWordCard extends StatelessWidget {
+class LearningTiles extends StatelessWidget {
   final String word;
-  final String emoji;
   final List<Color> gradient;
-  final ValueChanged<String> onWordSelected;
+  final Widget? navigateTo;
 
-  const CommonWordCard({
+  const LearningTiles({
     super.key,
     required this.word,
-    required this.emoji,
     required this.gradient,
-    required this.onWordSelected,
+    this.navigateTo,
   });
 
   @override
@@ -20,7 +18,14 @@ class CommonWordCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return TapScale(
-      onTap: () => onWordSelected(word),
+      onTap: () {
+        if (navigateTo != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => navigateTo!),
+          );
+        }
+      },
       child: Container(
         width: size.width * 0.40,
         height: size.height * 0.12,
@@ -37,7 +42,7 @@ class CommonWordCard extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            "$emoji $word",
+            word,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w600,

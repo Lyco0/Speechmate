@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:speechmate/screens/nature_page.dart';
 import '../widgets/background.dart';
-import '../widgets/common_word_card.dart';
+import '../widgets/learning_tiles.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/translation_card.dart';
 import '../services/dictionary_service.dart';
+import 'number_page.dart';
 
 class StudentDash extends StatefulWidget {
   const StudentDash({super.key});
@@ -15,36 +17,26 @@ class StudentDash extends StatefulWidget {
 class _StudentDashState extends State<StudentDash> with WidgetsBindingObserver {
   final TextEditingController searchController = TextEditingController();
   final DictionaryService dictionaryService = DictionaryService();
-  final List<Map<String, dynamic>> commonWords = [
+  final List<Map<String, dynamic>> learningTiles = [
     {
-      "word": "Tree",
-      "emoji": "🌳",
+      "word": "Numbers",
       "colors": [Color(0xFFFF7E79), Color(0xFFFFB677)],
+      "navigateTo": NumberPage(),
     },
     {
-      "word": "Water",
-      "emoji": "💧",
-      "colors": [Color(0xFFFFA834), Color(0xFFFFD56F)],
-    },
-    {
-      "word": "Sea",
-      "emoji": "🌊",
-      "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
-    },
-    {
-      "word": "Island",
-      "emoji": "🏝️",
-      "colors": [Color(0xFFB084FF), Color(0xFF7AA6FF)],
-    },
-    {
-      "word": "Cold",
-      "emoji": "❄️",
-      "colors": [Color(0xFFFFA9A3), Color(0xFFFFD6A5)],
-    },
-    {
-      "word": "Sun",
-      "emoji": "☀️",
+      "word": "Nature",
       "colors": [Color(0xFF5ED87D), Color(0xFF92FF70)],
+      "navigateTo": NaturePage(),
+    },
+    {
+      "word": "Body Parts",
+      "colors": [Color(0xFF66CCFF), Color(0xFF0099FF)],
+      "navigateTo": null,
+    },
+    {
+      "word": "Family",
+      "colors": [Color(0xFFB084FF), Color(0xFF7AA6FF)],
+      "navigateTo": null,
     },
   ];
 
@@ -94,7 +86,9 @@ class _StudentDashState extends State<StudentDash> with WidgetsBindingObserver {
       isLoading = true;
     });
 
-    final searchResult = await dictionaryService.searchWord(searchController.text);
+    final searchResult = await dictionaryService.searchWord(
+      searchController.text,
+    );
 
     setState(() {
       result = searchResult;
@@ -137,44 +131,20 @@ class _StudentDashState extends State<StudentDash> with WidgetsBindingObserver {
 
             const SizedBox(height: 30),
 
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Some common words",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
+            const Align(alignment: Alignment.centerLeft),
             const SizedBox(height: 15),
 
             Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: commonWords.map((w) {
-                return CommonWordCard(
-                  word: w["word"],
-                  emoji: w["emoji"],
-                  gradient: List<Color>.from(w["colors"]),
-                  onWordSelected: (selectedWord) async {
-                    FocusScope.of(context).unfocus();
-
-                    setState(() {
-                      searchController.text = selectedWord;
-                      isLoading = true;
-                    });
-
-                    final searchResult = await dictionaryService.searchWord(selectedWord);
-
-                    setState(() {
-                      result = searchResult;
-                      isLoading = false;
-                    });
-                  },
-                );
-              }).toList(),
+              children:
+                  learningTiles.map((item) {
+                    return LearningTiles(
+                      word: item["word"],
+                      gradient: List<Color>.from(item["colors"]),
+                      navigateTo: item["navigateTo"],
+                    );
+                  }).toList(),
             ),
 
             const SizedBox(height: 30),
@@ -184,7 +154,8 @@ class _StudentDashState extends State<StudentDash> with WidgetsBindingObserver {
               const CircularProgressIndicator()
             else if (searchController.text.isNotEmpty)
               TranslationCard(
-                nicobarese: result != null ? result!['nicobarese'] : "Word not found",
+                nicobarese:
+                    result != null ? result!['nicobarese'] : "Word not found",
                 english: result != null ? result!['english'] : "",
                 isError: result == null,
               ),
