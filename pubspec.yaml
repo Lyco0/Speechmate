@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.2.0+1
 
 environment:
-  sdk: ^3.7.2
+  sdk: ">=3.2.0 <4.0.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -52,4 +52,5 @@ flutter:
     - assets/audio/feelings/
     - assets/images/
     - assets/data/dictionary_phrases.json
+
     - assets/icons/branding.png
