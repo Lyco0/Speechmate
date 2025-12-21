@@ -4,21 +4,36 @@ import 'package:flutter/services.dart';
 class DictionaryService {
   List<Map<String, dynamic>> _data = [];
 
+  /// Load dictionary JSON
   Future<void> load() async {
-    final String jsonStr =
+    final String jsonString =
         await rootBundle.loadString('assets/data/dictionary.json');
-    final List list = json.decode(jsonStr);
-    _data = list.cast<Map<String, dynamic>>();
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    _data = jsonData.cast<Map<String, dynamic>>();
   }
 
-  Map<String, dynamic>? search(String word) {
-    try {
-      return _data.firstWhere(
-        (e) => e['english'].toString().toLowerCase() ==
-            word.toLowerCase(),
-      );
-    } catch (_) {
-      return null;
+  /// 🔁 BIDIRECTIONAL SEARCH
+  Map<String, dynamic>? search(String input) {
+    if (input.trim().isEmpty) return null;
+
+    final query = input.trim().toLowerCase();
+
+    for (final item in _data) {
+      final english = item['english']?.toString().toLowerCase() ?? '';
+      final nicobarese = item['nicobarese']?.toString().toLowerCase() ?? '';
+
+      // ✅ English → Nicobarese
+      if (english == query) {
+        return item;
+      }
+
+      // ✅ Nicobarese → English
+      if (nicobarese == query) {
+        return item;
+      }
     }
+
+    return null;
   }
 }
